@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <http:listener-config name="cryptocurrency-system-api-httpsListenerConfig">
+        <http:listener-connection host="${listener.https.host}" port="${listener.https.port}" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="keystore.jks" alias="mule" keyPassword="${listener.https.tls.keyPassword}" password="${listener.https.tls.password}" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+    <http:request-config name="HTTPSRequestConfigurationToCoinMarketCap" doc:name="HTTP Request configuration" doc:id="5d841471-e8c9-498a-be12-6ce94c2e4335" basePath="${coinMarketCap.basePath}" >
+		<http:request-connection protocol="HTTPS" host="${coinMarketCap.host}" />
+	</http:request-config>
+    <apikit:config name="cryptocurrency-system-api-config" api="resource::a33f23d5-1d66-4edc-937f-b275ecc37a3a:cryptocurrency-system-api:1.0.3:raml:zip:cryptocurrency-system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <import doc:name="common-utils-global.xml" doc:id="32cf22f4-de01-4ba5-8852-fc45aefa57c2" file="common-utils-global.xml" />
+    <import doc:name="common-utils-error-handler.xml" doc:id="553abae4-dce5-4949-9032-40ebbd1f99db" file="common-utils-error-handler.xml" />
+    <import doc:name="common-utils.xml" doc:id="40b0c29e-2f4e-468d-9155-2d6e153b2278" file="common-utils.xml" />
+    <import doc:name="common-utils-logging.xml" doc:id="275de0a0-3bbf-4936-bcc4-3cdcce3261ef" file="common-utils-logging.xml" />
+</mule>

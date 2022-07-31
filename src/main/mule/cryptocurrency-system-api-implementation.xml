@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="getAllCryptocurrenciesSubFlow" doc:id="ba9deb57-cb99-4320-b4c5-b6f65bc0dd78" >
+		<flow-ref doc:name="logInfoSubFlow" doc:id="fa228286-c8cd-402b-8568-196e01a522d8" name="logInfoSubFlow"/>
+		<http:request method="GET" doc:name="get1kCryptocurrencyFromCoinMarketCap" doc:id="e9127b17-6d1f-4e9d-9918-871ef9eacdd5" config-ref="HTTPSRequestConfigurationToCoinMarketCap" path="/listings/latest">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"CMC_PRO_API_KEY" : p('coinMarketCap.token')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"limit" : "1000"
+}]]]></http:query-params>
+		</http:request>
+		<flow-ref doc:name="logInfoSubFlow" doc:id="d88e2e35-2524-466d-89eb-fd781a60c8db" name="logInfoSubFlow" />
+		<ee:transform doc:name="transformData" doc:id="a2bac801-06f6-4461-9e48-16e6659ab6f9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.data map (object, index) -> {
+    name: object.name,
+    symbol: object.symbol,
+    (maxSupply: object.max_supply as String) if (object.max_supply != null),
+    circulatingSupply: object.circulating_supply as String,
+    totalSupply: object.total_supply as String,
+    price: object.quote.USD.price as String ++ "\$",
+    volume24h: object.quote.USD.volume_24h as String,
+    volumeChange24h: object.quote.USD.volume_change_24h as String ++ "%",
+    percentChange1h: object.quote.USD.percent_change_1h as String ++ "%",
+    percentChange24h: object.quote.USD.percent_change_24h as String ++ "%",
+    percentChange7d: object.quote.USD.percent_change_7d as String ++ "%",
+    percentChange30d: object.quote.USD.percent_change_30d as String ++ "%",
+    percentChange60d: object.quote.USD.percent_change_60d as String ++ "%",
+    percentChange90d: object.quote.USD.percent_change_90d as String ++ "%"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="getCryptocurrencySubFlow" doc:id="d4470938-bf13-49da-8a48-ce1df13106f5" >
+		<flow-ref doc:name="logInfoSubFlow" doc:id="dd0e75fc-e946-4fa7-a17a-83e3b2ba08e0" name="logInfoSubFlow" />
+		<http:request method="GET" doc:name="getCryptocurrencyBySymbol" doc:id="ece997c1-36ae-49eb-959e-9dea0eeb1b64" config-ref="HTTPSRequestConfigurationToCoinMarketCap" path="/map">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"CMC_PRO_API_KEY" : p('coinMarketCap.token')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"symbol" : attributes.queryParams.symbol
+}]]]></http:query-params>
+		</http:request>
+		<flow-ref doc:name="logInfoSubFlow" doc:id="8f56d9de-d060-4aea-8fda-3a459fe51d13" name="logInfoSubFlow" />
+		<ee:transform doc:name="transformData" doc:id="4abf0ba1-8290-4594-85ba-fd044516742a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    id: payload.data[0].id,
+    name: payload.data[0].name,
+    symbol: payload.data[0].symbol,
+    slug: payload.data[0].slug,
+    isActive: payload.data[0].is_active,
+    firstHistorycalData: payload.data[0].first_historical_data,
+    lastHistorycalData: payload.data[0].last_historical_data
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="cryptocurrency-system-api-main">
+        <http:listener config-ref="cryptocurrency-system-api-httpsListenerConfig" path="${listener.basePath}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <flow-ref doc:name="logInfoSubFlow" doc:id="697d86ad-1c14-4687-881c-de9b1ed79056" name="logInfoSubFlow" />
+        <flow-ref doc:name="initialSubFlow" doc:id="b69f94a1-22fb-491d-a6a3-093d464f479b" name="initialSubFlow" />
+        <apikit:router config-ref="cryptocurrency-system-api-config" />
+        <flow-ref doc:name="logInfoSubFlow" doc:id="c84fe950-ca81-4c31-8ef1-db6aea8fb06f" name="logInfoSubFlow" />
+        <error-handler ref="globalErrorHandler" />
+    </flow>
+    <flow name="cryptocurrency-system-api-console">
+        <http:listener config-ref="cryptocurrency-system-api-httpsListenerConfig" path="${listener.console}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="cryptocurrency-system-api-config" />
+        <error-handler ref="globalErrorHandler" />
+    </flow>
+    <flow name="get:\cryptocurrencies:cryptocurrency-system-api-config">
+        <ee:transform doc:name="setFlowNameVar" doc:id="59bb24ff-9700-4c07-9815-b7a4215feb52">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable resource="dwl/flowNameVar.dwl" variableName="flowName" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="getAllCryptocurrenciesSubFlow" doc:id="4170faa1-97dd-498b-a2dc-0ca04f02fbae" name="getAllCryptocurrenciesSubFlow"/>
+    </flow>
+    <flow name="get:\cryptocurrency:cryptocurrency-system-api-config">
+        <ee:transform doc:name="setFlowNameVar" doc:id="8fc71a87-7104-4834-aea6-96238421e2f1">
+            <ee:message />
+            <ee:variables>
+				<ee:set-variable resource="dwl/flowNameVar.dwl" variableName="flowName" />
+            </ee:variables>
+        </ee:transform>
+        <flow-ref doc:name="getCryptocurrencySubFlow" doc:id="15f5138c-7b01-4bc9-8763-fd206b642491" name="getCryptocurrencySubFlow"/>
+    </flow>
+</mule>

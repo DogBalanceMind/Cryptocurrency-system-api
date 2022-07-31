@@ -1,0 +1,15 @@
+listener:
+  basePath: "/cryptocurrency-sa/*"
+  console: "/console/*"
+  https:
+    host: "0.0.0.0"
+    port: "8082"
+    tls:
+      keyPassword: vfrcbv2142
+      password: vfrcbv2142
+      
+coinMarketCap:
+  token: "7629bfeb-da2e-40de-b439-a20d5be8e62c"
+  host: "pro-api.coinmarketcap.com"
+  basePath: "/v1/cryptocurrency"
+  
