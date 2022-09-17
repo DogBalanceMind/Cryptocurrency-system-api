@@ -47,13 +47,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>a33f23d5-1d66-4edc-937f-b275ecc37a3a</groupId>
-			<artifactId>cryptocurrency-system-api</artifactId>
-			<version>1.0.3</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.6.1</version>
@@ -64,6 +57,13 @@
 			<artifactId>common-utils</artifactId>
 			<version>1.0.1</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>1b8e9cb7-be60-4e33-b3cc-f5444071fa42</groupId>
+			<artifactId>cryptocurrency-system-api</artifactId>
+			<version>1.0.0</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

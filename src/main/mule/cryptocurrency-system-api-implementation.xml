@@ -50,7 +50,7 @@ payload.data map (object, index) -> {
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"CMC_PRO_API_KEY" : p('coinMarketCap.token')
+	"X-CMC_PRO_API_KEY" : p('coinMarketCap.token')
 }]]]></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
 ---
